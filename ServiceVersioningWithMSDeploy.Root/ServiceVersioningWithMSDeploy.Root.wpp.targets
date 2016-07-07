@@ -1,7 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <DeployIisAppPath>Default Web Site</DeployIisAppPath>
+    <DeployIisAppPath>Default Web Site/ServiceV4</DeployIisAppPath>
     <SkipExtraFilesOnServer>True</SkipExtraFilesOnServer>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <VersionsToDelete Include="Default Web Site/ServiceV1" />
+    <VersionsToDelete Include="Default Web Site/ServiceV2" />
+    <VersionsToDelete Include="Default Web Site/ServiceV3" />
+  </ItemGroup>
+  <PropertyGroup>
+    <GenerateMsdeployManifestFilesDependsOn>
+      $(GenerateMsdeployManifestFilesDependsOn);
+      RemoveOldServiceVersions
+    </GenerateMsdeployManifestFilesDependsOn>
+  </PropertyGroup>
+  <Target Name="RemoveOldServiceVersions" DependsOnTargets="GetMSDeployInstalledVersionPath">
+    <ItemGroup>
+      <MsDeploySourceManifest Include="runCommand">
+        <Path>&quot;$(MSDeployPath)msdeploy.exe&quot; -verb:delete -dest:iisApp=&quot;%(VersionsToDelete.Identity)&quot;</Path>
+      </MsDeploySourceManifest>
+    </ItemGroup>
+  </Target>
 </Project>
